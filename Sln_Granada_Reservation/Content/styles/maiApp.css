@@ -1,0 +1,66 @@
+﻿
+.btn-ingreso {
+    margin-top: 10px;
+    font-size: 20px;
+    width: 55%;
+    text-decoration: none;
+    color: #fff;
+    background-color: #065a2b;
+    padding: 0.5em 0.5em;
+    border-color: #bebebe;
+    border: 1px solid;
+    border-radius: 6px;
+    display: inline-block;
+    font-weight: 600;
+    transition: background-color .3s;
+}
+
+    .btn-ingreso:hover {
+        color: #1f1f22;
+        background-color: #07833d;
+        transition: background-color .3s;
+    }
+
+.BtnIngreso {
+    text-align: center;
+}
+
+.text-Login {
+    font-size: large;
+    font-weight: 600;
+}
+
+.text-Tittle-Login {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.TextBoxLogin {
+    position: relative;
+    width: 250px;
+}
+
+.TextBoxLogin {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid;
+    background-color: #fff;
+    border-radius: 5px;
+    outline: none;
+    color: #000000;
+    font-size: 1em;
+    font-size: large;
+}
+
+
+.TextBoxLogin {
+    border: 1px solid #5c6166;
+    transition: background-color .3s;
+}
+
+    .TextBoxLogin:hover {
+        border: 2px solid #07833d;
+        background-color: #d3d3d3;
+        transition: background-color .3s;
+    }

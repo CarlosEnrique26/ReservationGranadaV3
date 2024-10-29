@@ -1,0 +1,80 @@
+﻿@{
+    Layout = null;
+}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="~/Scripts/toastr.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<body>
+<div class="sidenav">
+    <div class="login-main-text">
+        <h1 class="TittlePrincipal">Sistema de Reservas<br></h1>
+        <p class="texto">Granada</p>
+        <div class="imagenGranada">
+            <img src="~/Content/CajaRuralGranada.jpg" />
+        </div>
+    </div>
+</div>
+<div class="main">
+    <div class="imagenGranadaMovile">
+        <img src="~/Content/CajaRuralGranada.jpg" alt="Imagen Granada">
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="login-form">
+                <form>
+                    <div class="form-group">
+                        <label class="texto">Usuario</label>
+                        <input type="text" class="UsuarioLogin" id="username" placeholder="Usuario">
+                    </div>
+                    <div class="form-group">
+                        <label class="texto">Contraseña</label>
+                        <input type="password" class="PasswordLogin" id="password" placeholder="Password">
+                    </div>
+                    <button type="button" onclick="getLoginUser();" class="BotonDIngreso">Ingresar</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-12 text-center">
+             <div class="image-container">
+                    <img src="~/Content/imagenva.png" alt="Descripción de la imagen" style="width: 80%; max-width: 300px;">
+             </div>
+        </div>
+    </div>
+</div>
+</body>
+<link href="~/Content/styles/StyleLoginAdmi.css" rel="stylesheet" />
+<link href="~/Content/toastr.css" rel="stylesheet" />
+<link href="~/Content/toastr.min.css" rel="stylesheet" />
+<script>
+    function getLoginUser() {
+        var login = $("#username").val();
+        var password = $("#password").val();
+
+        $.get("/Home/GetLoginUserPassAdmin?login=" + login + "&password=" + password, function (data, status) {
+            if (data.status) {
+                toastr.options = {
+                    positionClass: 'toast-top-center',
+                }
+                toastr.success(data.message);
+
+ 
+                window.location.href = '/Home/Users';
+
+            } else {
+                toastr.options = {
+                    positionClass: 'toast-top-center',
+                }
+                toastr.warning(data.message);
+ 
+            }
+
+        });
+    }
+
+
+
+</script>

@@ -1,0 +1,680 @@
+﻿@using Sln_Granada_Reservation.Models;
+@{
+    ViewBag.Title = "Reservation";
+    var userAdmin = (TbUser)Session["admin"];
+    var adminid = userAdmin.Id;
+}
+
+<h2>Gestión de reservas</h2>
+
+<br />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/Content/autocomplete/src/css/jquery.autocompleter.min.css" rel="stylesheet" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Id</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" disabled id="txtId">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Mesa</label>
+                <div class="col-sm-9" > 
+                    <select class="selectpicker cboTable"   data-style="form-control" data-live-search="true"   id="cboTable" onchange="LoadChair();">
+                        <option value="0">Seleccione</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Mesa completa</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" onclick="CheckTableComplete();" class="" id="chckTableComplete">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Sillas</label>
+                <div class="col-sm-9">
+                    <select class="form-select" id="cboChair">
+                        <option value="0">Seleccione</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Usuario</label>
+                <div class="col-sm-9">
+                    <input id="cboUser" name="country" type="text" class="form-control" /> 
+ 
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <select class="form-select" id="cboPersons">
+                        <option value="0">Seleccione</option>
+                        <option value="1">Solo</option>
+                        <option value="2">Con acompañante</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Sillas Acompañante</label>
+                <div class="col-sm-9">
+                    <select class="form-select" id="cboChairFriend">
+                        <option value="0">Seleccione</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Observación</label>
+                <div class="col-sm-9">
+                    <textarea id="observation" class="form-control">  </textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Imagen de mesas</label>
+                <div class="col-sm-9">
+                    <input type="file" name="name" value="" id="txtlogo" onchange="Previsualizate();" />
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-12 col-sm-3 ">
+                    <button type="button" onclick="newTable();" class="btn btn-info">Nuevo</button>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <button type="button" onclick="SaveReservation();" class="btn btn-success">Guardar</button>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <button type="button" onclick="locationReport();" class="btn btn-success">Reporte General</button>
+                </div>
+                <div class="col-12 col-sm-3">
+                    <button type="button" onclick="uploadImagen();" class="btn btn-warning">Cambiar Imagen</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <svg style="width: 100%; margin-top:-0px;" height="500">
+                <!-- Mesa Redonda (imagen) -->
+                <image href="~/Content/mesas.png" x="130" y="130" width="240" height="240" />
+                <!-- Sillas alrededor de la mesa -->
+                <g id="sillas"></g>
+            </svg>
+        </div>
+    </div>
+    <div class="row">
+        <table id="example" class="stripe row-border order-column display nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Mesa</th>
+                    <th scope="col">Disponibles</th>
+                    <th scope="col">Ocupado</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+</div>
+<style>
+    /* Estilo para el contenedor principal */
+    .container {
+        margin-top: 0px;
+    }
+
+    /* Sombra y espaciado para las cajas de texto */
+    .form-control {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para los botones */
+    .btn-info, .btn-success, .btn-primary {
+        width: 100%;
+    }
+
+    /* Sombra para el SVG (donde se visualizan las sillas y mesas) */
+    svg {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #f8f9fa; /* Fondo suave */
+    }
+
+    /* Ajustes de sombra y espaciado en la tabla */
+    #example {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    /* Ajuste en la visualización de las celdas */
+    th, td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Mejoramos el espaciado y alineación de las etiquetas */
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+    /* Estilo para el fondo */
+    body {
+        background-color: #f7f7f7;
+    }
+
+    /* Título */
+    h2 {
+        text-align: center;
+        color: #000000;
+        margin-bottom: 30px;
+        margin-top: 10px;
+    }
+    /* Contenedor para los botones */
+    .form-group.row {
+        display: flex;
+        align-items: center;
+    }
+
+    /* Ajustar el ancho de los botones para que sean más consistentes */
+    .form-group .btn-info,
+    .form-group .btn-success,
+    .form-group .btn-danger {
+        width: 100%; /* Ajusta los botones para que ocupen todo el espacio disponible en su contenedor */
+    }
+
+    /* Ajustar botones específicos para mantener su alineación */
+    .form-group.row .col-sm-3,
+    .form-group.row .col-sm-2 {
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+    /* Si quieres mantener un ancho uniforme pero más pequeño para algunos botones */
+    .btn-success, .btn-danger {
+        width: 100%; /* Ajusta el ancho de los botones */
+    }
+
+    /* Ajuste para que el archivo input esté alineado correctamente */
+    .form-group.row .col-sm-5 {
+        display: flex;
+        align-items: center;
+    }
+    /*.form-group.row .col-12 col-sm-3 .btn-success {
+        width: 200px;
+    }*/
+
+
+
+
+    
+</style>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<!-- Bootstrap 4 JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+<script src="~/Content/autocomplete/src/js/jquery.autocompleter.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script>
+    var idUserID = 0;
+
+    window.onload = new function () {
+        LoadTables();
+        LoadUsers();
+        LoadTableNew();
+  
+    }
+
+   
+
+    var numberChaisForTable = 0;
+    var chaisForTable = [];
+    const imagenes = [
+        "https://mivoto.es/Resource/Votation/Repository/1077114.png",
+        "https://mivoto.es/Resource/Votation/Repository/1077114.png"
+    ];
+
+    function locationReport() {
+        window.location.href = "/Home/ReservationReport";
+
+    }
+    var logoVotation = "";
+
+    function Previsualizate() {
+
+
+        var fileInput = document.getElementById('txtlogo');
+
+        var reader = new FileReader();
+        reader.readAsDataURL(fileInput.files[0]);
+
+        reader.onload = function () {
+            console.log('logoVotation: ', reader.result);
+            logoVotation = reader.result; //base64encoded string
+            $("#imgLogoPreview").attr("src", logoVotation);
+
+        };
+        reader.onerror = function (error) {
+            console.log('Error: ', error);
+        };
+
+
+
+    }
+
+    function uploadImagen() {
+
+        var model = {
+            Id: 1,
+            Enterprise: "CustomVote",
+            BackgroundTable: logoVotation
+        }
+
+        var json = JSON.stringify(model);
+
+        $.ajax({
+            url: '/Home/UploadConfig',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: json,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+                    LoadTableNew();
+                    newReservation();
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                }
+
+            }
+        });
+
+    }
+
+    function crearSillas(data) {
+        const numSillas = data.length;
+        const sillasG = document.getElementById("sillas");
+
+        // Limpiar el SVG de sillas anteriores
+        sillasG.innerHTML = '';
+
+        for (let i = 0; i < data.length; i++) {
+            var color = (data[i].IsOcupate) ? "red" : "black";
+
+            const angulo = i * (360 / numSillas) * (Math.PI / 180); // Convertir a radianes
+            const radio = 180;
+            const cx = 250 + radio * Math.sin(angulo);
+            const cy = 250 - radio * Math.cos(angulo);
+
+            const imagenAleatoria = imagenes[Math.floor(Math.random() * imagenes.length)];
+
+            const sillaImagen = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            sillaImagen.setAttribute('href', imagenAleatoria);
+            sillaImagen.setAttribute('x', cx - 20);
+            sillaImagen.setAttribute('y', cy - 20);
+            sillaImagen.setAttribute('width', 40);
+            sillaImagen.setAttribute('height', 40);
+            sillaImagen.setAttribute('onclick', `asignarNombre(${i + 1}, ${cx}, ${cy})`);
+            sillasG.appendChild(sillaImagen);
+
+            const numeroSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            numeroSilla.setAttribute('x', cx - 25);
+            numeroSilla.setAttribute('y', cy);
+            numeroSilla.setAttribute('text-anchor', 'end');
+            numeroSilla.setAttribute('dy', '0.3em');
+            numeroSilla.setAttribute('class', 'numeroSilla');
+            numeroSilla.setAttribute('fill', color);
+            numeroSilla.setAttribute('style', 'font-weight: bold;');
+            numeroSilla.textContent = i + 1;
+            sillasG.appendChild(numeroSilla);
+        }
+    }
+
+    function asignarNombre(numSilla, x, y) {
+        const nombre = prompt(`Ingresa el nombre para la silla ${numSilla}`);
+        const idNombre = `nombre-silla-${numSilla}`;
+        const sillasG = document.getElementById("sillas");
+
+        document.getElementById("sillaSeleccionada").textContent = `Número de silla: ${numSilla}`;
+
+        // Si ya hay un nombre para esta silla, lo eliminamos
+        const nombreAnterior = document.getElementById(idNombre);
+        if (nombreAnterior) {
+            sillasG.removeChild(nombreAnterior);
+        }
+
+        if (nombre && nombre.trim() !== '') {
+            const nombreTexto = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            nombreTexto.setAttribute('x', x + 25);
+            nombreTexto.setAttribute('y', y);
+            nombreTexto.setAttribute('id', idNombre);
+            nombreTexto.setAttribute('class', 'nombre');
+            nombreTexto.textContent = nombre;
+            sillasG.appendChild(nombreTexto);
+        }
+    }
+
+    function SaveReservation() {
+        var numberPerson = $("#cboPersons").val();
+        var tableComplete = $("#chckTableComplete").is(':checked');
+
+        var listModel = [];
+
+        if (tableComplete) {
+            for (var i = 0; i < numberChaisForTable; i++) {
+                var model = {
+                    TbTableId: $("#cboTable").val(),
+                    TbChair: chaisForTable[i].Id,
+                    TbUserId: '@adminid',
+                    Observation: $("#observation").val()
+                };
+
+                listModel.push(model);
+            }
+        } else {
+
+            var model = {
+                    TbTableId: $("#cboTable").val(),
+                    TbChair: $("#cboChair").val(),
+                    TbUserId: idUserID, //idUserID
+                    Observation: $("#observation").val()
+            };
+            listModel.push(model);
+
+            if (numberPerson == 2) {
+                var model = {
+                    TbTableId: $("#cboTable").val(),
+                    TbChair: $("#cboChairFriend").val(),
+                    TbUserId: idUserID,
+                    Observation: $("#observation").val()
+                };
+                listModel.push(model);
+            }
+
+        }
+
+        var json = JSON.stringify(listModel);
+        $.ajax({
+            url: '/Home/SaveReservation',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: json,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+                    LoadTableNew();
+                    newReservation();
+                    LoadTables();
+                    idUserID = 0;
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                }
+
+            }
+        });
+
+    }
+
+    function newReservation() {
+
+    }
+
+
+    function redirectDeatilReservation(tableid) {
+        window.location.href = "/Home/ReservationDetail?tableid=" + tableid;
+    }
+
+    function CheckTableComplete() {
+        var tableComplete = $("#chckTableComplete").is(':checked');
+
+        $("#cboChair").val(0);
+        $("#cboUser").val(0);
+        $("#cboPersons").val(0);
+        $("#cboChairFriend").val(0);
+
+
+        $("#cboChair").prop("disabled", tableComplete);
+        $("#cboUser").prop("disabled", tableComplete);
+        $("#cboPersons").prop("disabled", tableComplete);
+        $("#cboChairFriend").prop("disabled", tableComplete);
+    }
+
+    function LoadTables() {
+        $.get("/Home/GetTablesReservation", function (data, status) {
+            $("#cboTable").empty();
+
+            var html = "<option value='0'>Seleccione</option>";
+            if (data != null) {
+                for (var i = 0; i < data.length; i++) {
+                    var name = data[i].DescriptionTable.replace(/ /g, "");
+                    html += "<option data-tokens=" + name + " value=" + data[i].Id + ">" + data[i].DescriptionTable +"</option>";
+                }
+
+                $("#cboTable").append(html);
+                $('.cboTable').selectpicker('refresh');
+            }
+        });
+    }
+
+    function LoadChair() {
+        var tableid = $("#cboTable").val();
+
+        $.get("/Home/GetChairsReservation?tableid=" + tableid, function (data, status) {
+            $("#cboChair").empty();
+            $("#cboChairFriend").empty();
+
+            var html = "<option value='0'>Seleccione</option>";
+            if (data != null) {
+
+                crearSillas(data);
+                numberChaisForTable = data.length;
+                chaisForTable = data;
+
+                for (var i = 0; i < data.length; i++) {
+                    if (!data[i].IsOcupate) {
+                        html += "<option value=" + data[i].Id + ">" + data[i].DescriptionChair + "</option>";
+                    }
+                 }
+
+                $("#cboChair").append(html);
+                $("#cboChairFriend").append(html);
+
+            }
+        });
+    }
+
+    function LoadUsers() {
+
+        var user_list = [] 
+
+        $.get("/Home/GetUsersReservation", function (data, status) {
+       
+            if (data != null) {
+                for (var i = 0; i < data.length; i++) {
+                    var item = {
+                        Id: data[i].Id,
+                        NameUser: data[i].NameUser
+                    };
+                    user_list.push(item);
+                } 
+            }  
+        });
+         
+        $("#cboUser").autocomplete({
+            source: function (request, response) {
+                console.log("user_list", user_list);
+                var results = $.map(user_list, function (country) {
+                    
+                    if (country.NameUser.toLowerCase().indexOf(request.term.toLowerCase()) !== -1) {
+                        return {
+                            label: country.NameUser,
+                            value: country.NameUser,
+                            id: country.Id  // Incluimos el id del país
+                        };
+                    }
+                });
+                response(results);
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                // Aquí capturamos el id del país seleccionado
+                $("#countryId").val(ui.item.id);  // Guardamos el id en un campo oculto
+                console.log("ID seleccionado: " + ui.item.id); // Mostramos el id en la consola
+                idUserID = ui.item.id;
+            }
+        }); 
+    }
+
+   
+    /*
+     function LoadUsers() {
+     $.get("/Home/GetUsersReservation", function (data, status) {
+         $("#cboUser").empty();
+
+         var html = "<option value='0'>Seleccione</option>";
+         if (data != null) {
+             for (var i = 0; i < data.length; i++) {
+                 html += "<option value=" + data[i].Id + ">" + data[i].NameUser + "</option>";
+             }
+
+             $("#cboUser").append(html);
+         }
+     });
+ }
+    */
+
+    function LoadTableNew() {
+        $.get("/Home/GetChairTablesAndUser", function (data, status) {
+            if (data != null) {
+                createDatatable(data);
+            }
+        });
+    }
+
+    function createDatatable(arrayUser) {
+
+        if ($.fn.dataTable.isDataTable('#example')) {
+            var table = $('#example').DataTable();
+            table.clear();
+            table.rows.add(arrayUser);
+            table.draw();
+        }
+        else {
+            $('#example').DataTable({
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'colvis',
+
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF con logo',
+                        customize: function (doc) {
+                            doc.content.splice(1, 0, {
+                                margin: [0, 0, 0, 12],
+                                alignment: 'center',
+                                image: logoPDF
+                            });
+                            console.log(doc.content)
+                        }
+                    }, 
+                    {
+                        extend: 'colvis',
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                },
+                'order': [[1, 'asc']],
+                data: arrayUser,
+                columns: [
+                    { data: "Id", title: 'Id' },
+                    { data: "Mesa", title: 'Mesa' },
+                    { data: "ChairDisponible", title: 'Disponible' },
+                    { data: "ChairOcupate", title: 'Ocupado' },
+                    { data: "IsComplete", render: columnActive, bSortable: false },
+
+                    { defaultContent: '<input type="button" class="btn btn-warning" id="btnEdit" value="Detalle" />' }
+                ]
+            });
+            function columnActive(data, type, full, meta) {
+                return data ? "Completo" : "Incompleto";
+            }
+
+            $('#example').on('click', '#btnEdit', function () {
+                var table = $('#example').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+
+                redirectDeatilReservation(data.Id);
+            });
+
+
+        }
+    }
+
+ 
+
+
+
+
+s
+
+</script>

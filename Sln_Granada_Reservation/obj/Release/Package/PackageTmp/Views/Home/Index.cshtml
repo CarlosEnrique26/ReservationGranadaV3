@@ -1,0 +1,15 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script>
+    window.onload = new function () {
+        imageBackground();
+    }
+
+    function imageBackground() {
+        document.body.style.backgroundImage = 'url(../../Content/background.png)';
+        document.body.style.backgroundSize = "100% 100%";
+        document.body.style.backgroundAttachment = "fixed";
+    }
+</script>

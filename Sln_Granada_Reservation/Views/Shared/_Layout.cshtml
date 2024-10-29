@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de reservas</title>
+    @Styles.Render("~/Content/css")
+    @* @Scripts.Render("~/bundles/modernizr")*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="index.html">Sistema de Reservas</a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <!-- Navbar Search-->
+                <!-- <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" /> -->
+                <!-- <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button> -->
+            </div>
+        </form>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="@Url.Action("Perfil", "Home")"><i class="fas fa-user fa-fw"></i>Perfil</a></li>
+                    <li><hr class="dropdown-divider" /></li>
+                    <li><a class="dropdown-item" href="@Url.Action("LogOut", "Home")"><i class="fas fa-sign-out-alt"></i>Cerrar Sesion</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">RESUMEN</div>
+                        <a class="nav-link" href="@Url.Action("Reservation", "Home")">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                            Gestión de Reservas
+                        </a>
+                        <a class="nav-link" href="@Url.Action("Users", "Home")">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Usuarios
+                        </a>
+                        <a class="nav-link" href="@Url.Action("Table", "Home")">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chair"></i></div>
+                            Mesas
+                        </a>
+                        
+                        <a class="nav-link" href="@Url.Action("LogOut", "Home")">
+                            <div class="sb-nav-link-icon"><i class="fas fa-sign-out-alt"></i></div>
+                            Salir
+                        </a>
+
+
+                        @** <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
+                                Layouts
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav">
+                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
+                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
+                                </nav>
+                            </div>
+                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                                Pages
+                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        Authentication
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="login.html">Login</a>
+                                            <a class="nav-link" href="register.html">Register</a>
+                                            <a class="nav-link" href="password.html">Forgot Password</a>
+                                        </nav>
+                                    </div>
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
+                                        Error
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
+                                        <nav class="sb-sidenav-menu-nested nav">
+                                            <a class="nav-link" href="401.html">401 Page</a>
+                                            <a class="nav-link" href="404.html">404 Page</a>
+                                            <a class="nav-link" href="500.html">500 Page</a>
+                                        </nav>
+                                    </div>
+                                </nav>
+                            </div>
+                            <div class="sb-sidenav-menu-heading">Addons</div>
+                            <a class="nav-link" href="charts.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                                Charts
+                            </a>
+                            <a class="nav-link" href="tables.html">
+                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                                Tables
+                            </a>*@
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Sistema de Reservas
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    @RenderBody()
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    @* @RenderBody() *@
+
+    @*  <li class="nav-item" style="margin-left: 5px; margin-right: 5px;" id="mesasLink">@Html.ActionLink("Mesas", "Table", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        <li class="nav-item" style="margin-left: 5px; margin-right: 5px;" id="usuariosLink">@Html.ActionLink("Usuarios", "Users", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+        <li class="nav-item" style="margin-left: 5px; margin-right: 5px;" id="reservasLink">@Html.ActionLink("Gestión de reservas", "Reservation", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+    *@
+
+
+    @Scripts.Render("~/bundles/complementos")
+
+
+    <style>
+        /* Estilos básicos para el navbar */
+        .navbar {
+            /*padding: 10px 0;*/
+        }
+
+        /* Estilos para los enlaces */
+        .nav-link {
+            color: #ffffff !important;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            /* Efecto hover sobre los enlaces */
+            .nav-link:hover {
+                background-color: #5a6268;
+                color: #ffffff !important;
+                border: 1px solid #ffffff;
+            }
+
+            /* Estilo para el enlace activo */
+            .nav-link.active {
+                background-color: #17a2b8;
+                border: 1px solid #ffffff;
+                color: #ffffff !important;
+            }
+            .nav-link .fas {
+                margin-right: 8px; /* Espacio entre el ícono y el texto */
+                color: #b0b0b0; /* Color gris claro para los íconos */
+                font-size: 1.2em; /* Aumenta el tamaño de los íconos */
+                transition: color 0.3s ease; /* Suaviza el cambio de color al hacer hover */
+            }
+
+            /* Cambia el color al hacer hover sobre el enlace */
+            .nav-link:hover .fas {
+                color: #ffffff; /* Cambia a blanco cuando el enlace está en hover */
+            }
+
+        .dropdown-item .fas {
+            margin-right: 10px; /* Espacio entre el ícono y el texto */
+
+            font-size: 1.2em; /* Tamaño del ícono */
+            transition: color 0.3s ease;
+        }
+
+        /* Cambia el color de los íconos al hacer hover en el menú desplegable */
+        .dropdown-item:hover .fas {
+            color: #000000; /* Cambia a negro al hacer hover */
+        }
+
+        /* Clase para resaltar la opción activa en el menú */
+        .nav-link.active {
+            background-color: #007bff; /* Color de fondo para resaltar */
+            color: #ffffff !important; /* Color de texto blanco */
+            border-radius: 5px;
+        }
+    </style>
+</body>
+
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Selecciona todos los enlaces del menú
+    document.querySelectorAll('.nav-link').forEach(link => {
+        // Agrega un evento de clic a cada enlace
+        link.addEventListener('click', function () {
+            // Elimina la clase "active" de todos los enlaces
+            document.querySelectorAll('.nav-link').forEach(item => item.classList.remove('active'));
+            // Añade la clase "active" al enlace seleccionado
+            this.classList.add('active');
+        });
+    });
+
+    // Mantiene activo el enlace de la página actual al recargar
+    window.addEventListener('load', () => {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    });
+
+
+
+    //
+
+
+
+</script>

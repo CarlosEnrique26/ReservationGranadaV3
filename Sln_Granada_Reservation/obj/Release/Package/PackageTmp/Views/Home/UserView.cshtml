@@ -1,0 +1,66 @@
+﻿@{
+    Layout = null;
+}
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!------ <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">  ---------->
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link href="~/Content/styles/LoginStyles.css" rel="stylesheet" />
+<!------ <link href="~/Content/styles/maiApp.css" rel="stylesheet" /> ---------->
+<!------ Include the above in your HEAD tag ---------->
+
+<body>
+    <div class="container">
+        <!-- Form container (left) -->
+        <div class="form-container">
+            <h3>Iniciar Sesión</h3>
+            <form id="login-form" class="form" action="" method="post">
+                <div class="form-group">
+                    <input type="text" name="username" id="username" class="form-control" placeholder="Usuario" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Contraseña" required>
+                </div>
+                <div class="form-group form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Recordarme</label>
+                </div>
+                <button type="button" onclick="getLoginUser();" value="Ingresar" class="btn btn-primary">Ingresar</button>
+            </form>
+        </div>
+
+        <!-- Image container (right) -->
+        <div class="image-container">
+            <img src="~/Content/CajaRuralGranada.jpg" alt="Caja Rural Granada">
+        </div>
+    </div>
+</body>
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    function getLoginUser() {
+        var login = $("#username").val();
+        var password = $("#password").val();
+
+        $.get("/Home/GetLoginUserPass?login=" + login + "&password=" + password, function (data, status) {
+            if (data.status) {
+                swal(data.message, {
+                    icon: "success",
+                });
+                window.location.href = '/Home/ViewTableUser';
+
+            } else {
+                swal(data.message, {
+                    icon: "warning",
+                });
+            }
+
+        });
+    }
+</script>

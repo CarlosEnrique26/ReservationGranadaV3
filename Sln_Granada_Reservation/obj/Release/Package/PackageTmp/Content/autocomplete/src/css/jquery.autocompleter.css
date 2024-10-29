@@ -1,0 +1,27 @@
+/**
+ * A jQuery plugin autocomplete
+ * @author Gozoro <gozoro@yandex.ru>
+ *
+ */
+
+ .multiselect-dropdownlist{
+	position:absolute;
+	display: none;
+	border: 1px solid black;
+	background: white;
+	color:black;
+	overflow-y: auto;
+	max-height:300px;
+	z-index:4000;
+}
+
+.autocompleter-item{
+	cursor: pointer;
+	color: black;
+	padding: 4px;
+}
+
+.autocompleter-item.selected{
+	background-color: #398ee7;
+	color: white;
+}

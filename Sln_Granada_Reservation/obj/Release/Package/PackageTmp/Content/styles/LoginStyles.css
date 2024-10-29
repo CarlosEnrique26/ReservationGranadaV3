@@ -1,0 +1,123 @@
+﻿/* General body styling with a split background */
+body {
+    background: linear-gradient(180deg, #343a40 50%, #6c757d 50%);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Container styling */
+.container {
+    max-width: 900px;
+    background-color: #ffffff;
+    border-radius: 30px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    height: 500px;
+}
+
+/* Left side (form) styling */
+.form-container {
+    flex: 1;
+    padding: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+    .form-container h3 {
+        font-size: 24px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-container input[type="text"],
+    .form-container input[type="password"] {
+        border-radius: 10px;
+        border: 1px solid #ced4da;
+        padding: 15px;
+        font-size: 18px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .form-container button {
+        background-color: #007bff;
+        color: white;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        width: 100%;
+        font-size: 18px;
+    }
+
+.form-group.form-check {
+    margin-bottom: 30px;
+}
+
+/* Right side (image) styling */
+.image-container {
+    flex: 1;
+    background-color: #f8f9fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 50px;
+    border-left: 2px solid #e9ecef;
+}
+
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+    }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%; /* Ocupa casi todo el ancho de la pantalla */
+        height: auto;
+        border-radius: 20px;
+    }
+
+    .image-container {
+        order: -1; /* Imagen aparece encima del formulario */
+        padding: 20px;
+    }
+
+        .image-container img {
+            width: 150px; /* Imagen más grande en móvil */
+            height: auto;
+            margin-bottom: 0px; /* Reducimos el espacio debajo de la imagen */.........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+        }
+
+    .form-container {
+        padding-top: 0px; /* Padding superior */
+        padding-right: 20px; /* Padding derecho */
+        padding-bottom: 20px; /* Padding inferior */
+        padding-left: 20px; /* Padding izquierdo */
+    }
+
+        /* Ajuste del título en móvil */
+        .form-container h3 {
+            font-size: 24px;
+            margin-top: 10px; /* Reducimos el espacio superior del título */
+            margin-bottom: 20px; /* Mantén un buen espacio debajo del título */
+            text-align: center;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="password"] {
+            padding: 15px; /* Mayor tamaño para campos de texto */
+            font-size: 18px; /* Aumenta tamaño de fuente en móvil */
+        }
+
+        .form-container button {
+            padding: 15px;
+            font-size: 18px;
+        }
+}

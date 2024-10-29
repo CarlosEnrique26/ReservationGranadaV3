@@ -1,0 +1,399 @@
+﻿
+@{
+    ViewBag.Title = "ReservationDetail";
+    var tableid = ViewBag.TableId;
+}
+
+<h2 id="title">Detalle de reserva</h2>
+
+<br />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="~/Content/autocomplete/src/css/jquery.autocompleter.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Sillas</label>
+                <div class="col-sm-9">
+                    <select class="form-select" id="cboChair">
+                        <option value="0">Seleccione</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-3">
+                    <button type="button" onclick="DeleteAssignChair();" class="btn btn-success">Liberar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Usuario</label>
+                <div class="col-sm-9">
+                    <input id="cboUser" name="country" type="text" class="form-control" />
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-3">
+                    <button type="button" onclick="SaveReservation();" class="btn btn-success">Asignar Usuario</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-12 col-md-12" style="text-align:center;">
+            <svg style="width: 50%;" height="500" preserveAspectRatio="xMaxYMax meet">
+                <!-- Mesa Redonda (imagen) -->
+                <image href="~/Content/mesas.png" x="130" y="130" width="240" height="240" />
+                <!-- Sillas alrededor de la mesa -->
+                <g id="sillas"></g>
+            </svg>
+        </div>
+    </div>
+</div>
+<style>
+
+    /* Estilo para el contenedor principal */
+    .container {
+        margin-top: 30px;
+    }
+
+    /* Sombra y espaciado para las cajas de texto */
+    .form-control {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para los botones */
+    .btn-info, .btn-success, .btn-primary {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+
+    /* Sombra para el SVG (donde se visualizan las sillas y mesas) */
+    svg {
+    }
+
+    /* Estilo para los textos de los nombres alrededor de la mesa */
+    #sillas text {
+        font-size: 14px;
+        font-weight: bold;
+        fill: red;
+        text-anchor: middle;
+        dominant-baseline: central;
+    }
+
+    /* Alineación para los selects y botones */
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-group .col-sm-3, .form-group .col-sm-9, .form-group .col-sm-5 {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        
+
+    /* Estilo para los selects */
+    select.form-select, select.selectpicker {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ced4da;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Aseguramos que el botón tenga un buen espaciado y esté alineado */
+    button.btn-success {
+        margin-top: 10px;
+        width: auto;
+        padding: 8px 20px;
+    }
+
+    /* Ajuste en la visualización de las celdas */
+    th, td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Estilo para el fondo */
+    body {
+        background-color: #f7f7f7;
+    }
+
+    /* Título */
+    h2 {
+        text-align: center;
+        color: #000000;
+        margin-bottom: 30px;
+    }
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+<script src="~/Content/autocomplete/src/js/jquery.autocompleter.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+    var idUserID = 0;
+
+    window.onload = new function () {
+
+        LoadTableNew();
+        LoadChair();
+        LoadUsers();
+    }
+
+    function LoadTableNew() {
+        $.get("/Home/GetDetailTablesAndUser?tableid=@tableid"  , function (data, status) {
+            if (data != null) {
+                $("#title").html("Detalle de reserva para " + data[0].MesaName);
+                crearSillas(data);
+            }
+        });
+    }
+
+
+
+    function SaveReservation() {
+
+        var listModel = [];
+            var model = {
+                TbTableId: @tableid,
+                TbChair: $("#cboChair").val(),
+                TbUserId: idUserID
+             };
+         listModel.push(model);
+
+
+        var json = JSON.stringify(listModel);
+        $.ajax({
+            url: '/Home/SaveReservation',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: json,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+                    LoadTableNew();
+                    idUserID = 0;
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                }
+            }
+        });
+
+    }
+
+    function LoadUsers() {
+
+        var user_list = []
+
+        $.get("/Home/GetUsers", function (data, status) {
+
+            if (data != null) {
+                for (var i = 0; i < data.length; i++) {
+                    var item = {
+                        Id: data[i].Id,
+                        NameUser: data[i].NameUser
+                    };
+                    user_list.push(item);
+                }
+            }
+        });
+
+        $("#cboUser").autocomplete({
+            source: function (request, response) {
+                console.log("user_list", user_list);
+                var results = $.map(user_list, function (country) {
+
+                    if (country.NameUser.toLowerCase().indexOf(request.term.toLowerCase()) !== -1) {
+                        return {
+                            label: country.NameUser,
+                            value: country.NameUser,
+                            id: country.Id  // Incluimos el id del país
+                        };
+                    }
+                });
+                response(results);
+            },
+            minLength: 1,
+            select: function (event, ui) {
+                // Aquí capturamos el id del país seleccionado
+                $("#countryId").val(ui.item.id);  // Guardamos el id en un campo oculto
+                console.log("ID seleccionado: " + ui.item.id); // Mostramos el id en la consola
+                idUserID = ui.item.id;
+            }
+        });
+    }
+
+    /*function LoadUsers() {
+        $.get("/Home/GetUsers", function (data, status) {
+            $("#cboUser").empty();
+
+            var html = "<option value='0'>Seleccione</option>";
+            if (data != null) {
+                for (var i = 0; i < data.length; i++) {
+                    var name = data[i].NameUser.replace(/ /g, "");
+                    html += "<option data-tokens=" + name  +" value=" + data[i].Id + ">" + data[i].NameUser + "</option>";
+                }
+
+                $("#cboUser").append(html);
+            }
+
+            $('.cboUser').selectpicker('refresh');
+        });
+    }*/
+
+    function DeleteAssignChair() {
+        var chairid = $("#cboChair").val();
+
+        $.get("/Home/DeleteAssignChair?chairid=" + chairid, function (data, status) {
+            if (data.status) {
+                swal(data.message, {
+                    icon: "success",
+                });
+                LoadTableNew();
+            } else {
+                swal(data.message, {
+                    icon: "warning",
+                });
+            }
+        });
+    }
+
+
+
+
+    function LoadChair() {
+
+        $.get("/Home/GetChair?tableid=@tableid" , function (data, status) {
+            $("#cboChair").empty();
+
+            var html = "<option value='0'>Seleccione</option>";
+            if (data != null) {
+
+                for (var i = 0; i < data.length; i++) {
+                        html += "<option value=" + data[i].Id + ">" + data[i].DescriptionChair + "</option>";
+
+                }
+
+                $("#cboChair").append(html);
+
+            }
+        });
+    }
+
+    const imagenes = [
+        "https://mivoto.es/Resource/Votation/Repository/cara-de-nina.png",
+        "https://mivoto.es/Resource/Votation/Repository/cara-de-nino-con-gafas.png",
+        "https://mivoto.es/Resource/Votation/Repository/pngwing.com.png"
+    ];
+
+    function crearSillas(data) {
+        const numSillas = data.length;
+        const sillasG = document.getElementById("sillas");
+
+        // Limpiar el SVG de sillas anteriores
+        sillasG.innerHTML = '';
+
+        for (let i = 0; i < data.length; i++) {
+            var color = (data[i].IsOcupate) ? "red" : "black";
+
+            const angulo = i * (360 / numSillas) * (Math.PI / 180); // Convertir a radianes
+            const radio = 180;
+            const cx = 250 + radio * Math.sin(angulo);
+            const cy = 250 - radio * Math.cos(angulo);
+
+            const imagenAleatoria = imagenes[Math.floor(Math.random() * imagenes.length)];
+
+            const sillaImagen = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            sillaImagen.setAttribute('href', imagenAleatoria);
+            sillaImagen.setAttribute('x', cx - 20);
+            sillaImagen.setAttribute('y', cy - 20);
+            sillaImagen.setAttribute('width', 40);
+            sillaImagen.setAttribute('height', 40);
+            sillasG.appendChild(sillaImagen);
+
+            const numeroSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            numeroSilla.setAttribute('x', cx - 25);
+            numeroSilla.setAttribute('y', cy);
+            numeroSilla.setAttribute('text-anchor', 'end');
+            numeroSilla.setAttribute('dy', '0.3em');
+            numeroSilla.setAttribute('class', 'numeroSilla');
+            numeroSilla.setAttribute('fill', color);
+            numeroSilla.setAttribute('style', 'font-weight: bold;');
+            numeroSilla.textContent = (i + 1) ;
+            sillasG.appendChild(numeroSilla);
+
+            const etiquetaSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            etiquetaSilla.setAttribute('x', cx - 20);
+            etiquetaSilla.setAttribute('y', cy - 30);
+            etiquetaSilla.setAttribute('dy', '0.3em');
+
+            var lengthName = data[i].NameUser.length;
+            if (lengthName <= 15) {
+                etiquetaSilla.setAttribute('text-anchor', 'middle');
+            } else {
+                if (i <= 6) {
+                    etiquetaSilla.setAttribute('text-anchor', 'start');
+                } else {
+                    etiquetaSilla.setAttribute('text-anchor', 'end');
+                }
+            }
+
+            etiquetaSilla.setAttribute('class', 'etiquetaSilla');
+            etiquetaSilla.setAttribute('fill', color);
+            etiquetaSilla.setAttribute('style', 'font-weight: bold;');
+            etiquetaSilla.textContent = data[i].NameUser;
+            sillasG.appendChild(etiquetaSilla);
+
+        }
+    }
+
+
+
+    s
+
+
+</script>

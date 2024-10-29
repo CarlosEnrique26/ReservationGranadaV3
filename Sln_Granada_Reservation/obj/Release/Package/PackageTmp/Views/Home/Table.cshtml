@@ -1,0 +1,462 @@
+﻿
+@{
+    ViewBag.Title = "Table";
+}
+
+<h2>Gestión de Mesas</h2>
+<br />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Id</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" disabled id="txtId">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Descripción</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="txtdescription">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Número de sillas</label>
+                <div class="col-sm-9">
+                    <input type="number" onchange="crearSillas();" class="form-control" id="txtnumber">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Bloqueada</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="" id="chkBlock">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Activo</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="" id="chkActive">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <button type="button" onclick="newTable();" class="btn btn-info">Nuevo</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" onclick="SaveTable();" class="btn btn-success">Guardar</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" onclick="crearSillas();" class="btn btn-primary">Previsualizar</button>
+                </div>
+
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Mesas</label>
+                <div class="col-sm-9">
+                    <input type="file" class="" id="txtfile">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <input type="button" class="btn btn-info" value="Cargar csv" onclick="uploadTables();" id="">
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <svg style="width: 100%; margin-top:-0px;" height="500">
+                <!-- Mesa Redonda (imagen) -->
+                <image href="~/Content/mesas.png" x="130" y="130" width="240" height="240" />
+                <!-- Sillas alrededor de la mesa -->
+                <g id="sillas"></g>
+            </svg>
+        </div>
+
+    </div>
+    <div class="row">
+        <table id="example" class="stripe row-border order-column display nowrap">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Bloqueo</th> <!-- Nueva columna para el estado de bloqueo -->
+                    <th scope="col">Estado</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<style>
+    
+    /* Estilo para el contenedor principal */
+    .container {
+        margin-top: 0px;
+    }
+
+    /* Sombra y espaciado para las cajas de texto */
+    .form-control {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Estilo para los botones */
+    .btn-info, .btn-success, .btn-primary {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* Sombra para el SVG (donde se visualizan las sillas y mesas) */
+    svg {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #f8f9fa; /* Fondo suave */
+    }
+
+    /* Ajustes de sombra y espaciado en la tabla */
+    #example {
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    /* Ajuste en la visualización de las celdas */
+    th, td {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    /* Mejoramos el espaciado y alineación de las etiquetas */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: bold;
+    }
+
+    /* Estilo para el fondo */
+    body {
+        background-color: #f7f7f7;
+    }
+
+    /* Título */
+    h2 {
+        text-align: center;
+        color: #000000;
+        margin-bottom: 30px;
+        margin-top: 10px;
+    }
+    .row {
+        
+        margin-bottom: 20px;
+    }
+
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    window.onload = new function () {
+        LoadTableNew();
+       
+    }
+
+    function SaveTable() {
+        var model = {
+            Id: $("#txtId").val(),
+            DescriptionTable: $("#txtdescription").val(),
+            TotalPerson: $("#txtnumber").val(),
+            IsBlocked: $("#chkBlock").is(':checked'),  // Guardar el estado del bloqueo
+            Active: $("#chkActive").is(':checked')
+        }
+       
+
+        var json = JSON.stringify(model);
+
+        $.ajax({
+            url: '/Home/SaveTable',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: json,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+                    LoadTableNew();
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                   
+                }
+            }
+        });
+
+    }
+
+    function newTable() {
+        $("#txtId").val("");
+        $("#txtdescription").val("");
+        $("#txtnumber").val("");
+        $("#chkActive").prop("checked", false);
+    }
+
+    function GetTableByID(tableid) {
+        $.get('/Home/GetTableById?tableid=' + tableid, function (data, status) {
+            $("#txtId").val(data.Id);
+            $("#txtdescription").val(data.DescriptionTable);
+            $("#txtnumber").val(data.TotalPerson);
+            $("#chkActive").val(data.Active);
+        });
+    }
+
+    function LoadTableNew() {
+        $.get("/Home/GetTables", function (data, status) {
+            if (data != null) {
+                createDatatable(data);
+            }
+        });
+    }
+
+
+    function uploadTables() { 
+
+        var fileData = new FormData();
+        var fileUpload = $("#txtfile").get(0);
+        var filesCSV = fileUpload.files;
+
+        for (var i = 0; i < filesCSV.length; i++) {
+            fileData.append(filesCSV[i].name, filesCSV[i]);
+        }
+        $.ajax({
+            url: '/Home/UpladoTables',
+            type: "POST",
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            data: fileData,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+                    LoadTableNew();
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                }
+            }
+             
+        });
+    }
+
+    function createDatatable(arrayUser) {
+
+        if ($.fn.dataTable.isDataTable('#example')) {
+            var table = $('#example').DataTable();
+            table.clear();
+            table.rows.add(arrayUser);
+            table.draw();
+        }
+        else {
+            $('#example').DataTable({
+                dom: 'Blfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'colvis',
+
+                    {
+                        extend: 'pdfHtml5',
+                        text: 'PDF con logo',
+                        customize: function (doc) {
+                            doc.content.splice(1, 0, {
+                                margin: [0, 0, 0, 12],
+                                alignment: 'center',
+                                image: logoPDF
+                            });
+                            console.log(doc.content)
+                        }
+                    }, 
+                    {
+                        extend: 'colvis',
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                },
+                'order': [[1, 'asc']],
+                data: arrayUser,
+                columns: [
+                    { data: "Id", title: 'Id' },
+                    { data: "DescriptionTable", title: 'Descripción' },
+                    { data: "TotalPerson", title: 'Cantidad' }, 
+                    {
+                        data: "IsBlocked",
+                        title: 'Estado',
+                        render: function (data, type, row) {
+                            return row.IsBlocked ? "Bloqueada" : "Desbloqueada";
+                        },
+                        bSortable: false
+                    },
+                    { data: "Active", render: columnActive, bSortable: false },
+                    { defaultContent: '<input type="button" class="btn btn-warning" id="btnEdit" value="Editar" />' },
+                    { defaultContent: '<input type="button" class="btn btn-danger" id="btnDelete" value="Eliminar" />' }
+                ]
+            });
+
+
+
+
+
+            $('#example').on('click', '#btnEdit', function () {
+                var table = $('#example').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+
+                $("#txtId").val(data.Id);
+                $("#txtdescription").val(data.DescriptionTable);
+                $("#txtnumber").val(data.TotalPerson);
+                // Actualizar el estado del checkbox de bloqueo
+                $("#chkBlock").prop("checked", data.IsBlocked);  // Cargar el estado de bloqueo
+                $("#chkActive").prop("checked", data.Active);
+                crearSillas();
+            });
+
+            $('#example').on('click', '#btnDelete', function () {
+                var table = $('#example').DataTable();
+                var data = table.row($(this).parents('tr')).data();
+                swal({
+                    title: "Esta seguro?",
+                    text: "La mesa seleccionada será eliminada",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            $.get('/Home/DeleteTable?tableid=' + data.Id, function (data, status) {
+                                if (data.status) {
+                                    swal(data.message, {
+                                        icon: "success",
+                                    });
+                                    LoadTableNew();
+                                    newTable();
+                                } else {
+                                    swal(data.message, {
+                                        icon: "warning",
+                                    });
+                                }
+
+                            });
+                        } else {
+                            swal("No se realizaron cambios");
+                        }
+                    });
+            });
+        }
+        function columnActive(data, type, full, meta) { 
+            return data ? "Activo" : "Inactivo";
+        }
+    }
+
+
+
+    const imagenes = [
+        "https://mivoto.es/Resource/Votation/Repository/cara-de-nina.png",
+        "https://mivoto.es/Resource/Votation/Repository/cara-de-nino-con-gafas.png",
+        "https://mivoto.es/Resource/Votation/Repository/pngwing.com.png"
+    ];
+
+    function crearSillas() {
+        const numSillas = $("#txtnumber").val();
+        const sillasG = document.getElementById("sillas");
+
+        // Limpiar el SVG de sillas anteriores
+        sillasG.innerHTML = '';
+
+        for (let i = 0; i < numSillas; i++) {
+            const angulo = i * (360 / numSillas) * (Math.PI / 180); // Convertir a radianes
+            const radio = 180;
+            const cx = 250 + radio * Math.sin(angulo);
+            const cy = 250 - radio * Math.cos(angulo);
+
+            const imagenAleatoria = imagenes[Math.floor(Math.random() * imagenes.length)];
+
+            const sillaImagen = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            sillaImagen.setAttribute('href', imagenAleatoria);
+            sillaImagen.setAttribute('x', cx - 20);
+            sillaImagen.setAttribute('y', cy - 20);
+            sillaImagen.setAttribute('width', 40);
+            sillaImagen.setAttribute('height', 40);
+            sillaImagen.setAttribute('onclick', `asignarNombre(${i + 1}, ${cx}, ${cy})`);
+            sillasG.appendChild(sillaImagen);
+
+            const numeroSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            numeroSilla.setAttribute('x', cx - 25);
+            numeroSilla.setAttribute('y', cy);
+            numeroSilla.setAttribute('text-anchor', 'end');
+            numeroSilla.setAttribute('dy', '0.3em');
+            numeroSilla.setAttribute('class', 'numeroSilla');
+            numeroSilla.textContent = i + 1;
+            sillasG.appendChild(numeroSilla);
+        }
+    }
+
+    function asignarNombre(numSilla, x, y) {
+        const nombre = prompt(`Ingresa el nombre para la silla ${numSilla}`);
+        const idNombre = `nombre-silla-${numSilla}`;
+        const sillasG = document.getElementById("sillas");
+
+        document.getElementById("sillaSeleccionada").textContent = `Número de silla: ${numSilla}`;
+
+        // Si ya hay un nombre para esta silla, lo eliminamos
+        const nombreAnterior = document.getElementById(idNombre);
+        if (nombreAnterior) {
+            sillasG.removeChild(nombreAnterior);
+        }
+
+        if (nombre && nombre.trim() !== '') {
+            const nombreTexto = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            nombreTexto.setAttribute('x', x + 25);
+            nombreTexto.setAttribute('y', y);
+            nombreTexto.setAttribute('id', idNombre);
+            nombreTexto.setAttribute('class', 'nombre');
+            nombreTexto.textContent = nombre;
+            sillasG.appendChild(nombreTexto);
+        }
+    }
+
+
+
+    
+   
+</script>

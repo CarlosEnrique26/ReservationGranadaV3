@@ -1,0 +1,82 @@
+﻿
+@{
+    ViewBag.Title = "ViewResumeTableUser";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+
+    var userid = ViewBag.UserId;
+}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+<div class="container" id="divMain">
+
+    <h2>Resumen de reserva realizada</h2>
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="form-group row">
+                <div class="col-12" id="divInfo">
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-6">
+                    <input type="button" class="btn btn-warning btn-block" value="Modificar" onclick="LoadTables();">
+                </div>
+                <div class="col-6">
+                    <input type="button" class="btn btn-danger btn-block" value="Anular" onclick="LoadTables();">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-12">
+
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    window.onload = new function () {
+        loadResume();
+    }
+
+    function loadResume() {
+
+        $("#divInfo").empty();
+        $.get("/Home/GetInfoUserReservation?userid=@userid" , function (data, status) {
+            var html = "<ul>";
+            if (data.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                    html += "<li>" + data[i].ChairName + " " + data[i].NameUser + "</li>";
+                }
+                html += "</ul>";
+                $("#divInfo").append(html);
+            } 
+
+        });
+    }
+
+    function AnulateReservation() {
+        swal({
+            title: "Esta seguro?",
+            text: "Usted eliminara su reserva",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) { 
+                } else {
+                    swal("No se realizaron cambios");
+                }
+            });
+    }
+
+
+    function deleteReservation() {
+
+    }
+</script>

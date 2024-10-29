@@ -1,0 +1,587 @@
+﻿
+@{
+    ViewBag.Title = "Users";
+}
+
+<h2>Gestión de Usuarios</h2>
+<br />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<div class="container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Id</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" disabled id="Id">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Nombre</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="NameUser">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Documento</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="DNI">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Usuario</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="UserName">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Contraseña</label>
+                <div class="col-sm-5">
+                    <input type="password" class="form-control" id="PasswordUser">
+                </div>
+                <div class="col-sm-2">
+                    <button type="button" onclick="viewPassword();" class="btn btn-info">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <button type="button" onclick="newUser();" class="btn btn-info">Nuevo</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" onclick="saveUser();" class="btn btn-success">Guardar</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" onclick="saveUploadCenso();" class="btn btn-success">Cargar censo</button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" onclick="deleteCenso();" class="btn btn-danger">Eliminar censo</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Acompañante</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="NameFriend">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Email</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Email">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Teléfono</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Phone">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Activo</label>
+                <div class="col-sm-9">
+                    <input type="checkbox" class="" id="Active">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Censo xlsx</label>
+
+                <div class="col-sm-5">
+                    <input type="file" class="Seleccione" id="txtfile">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-3">
+                    <button type="button" onclick="sendMassivePassword();" class="btn btn-info">Enviar credenciales</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid table-wrapper">
+        <!-- Contenedor separado para la tabla -->
+        <div class="row">
+            <table id="example" class="stripe row-border order-column display nowrap">
+                <thead>
+                    <tr>
+                        <th scope="col">Id</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Documento</th>
+                        <th scope="col">Login</th>
+                        <th scope="col">Acompañante</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Activo</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    </div>
+    <style>
+        /* Estilo para el contenedor principal */
+        .container {
+            margin-top: 0px;
+            display: flex;
+            justify-content: center; /* Centra los formularios horizontalmente */
+            align-items: flex-start; /* Alinea los formularios en la parte superior */
+            flex-wrap: wrap; /* Permite que los formularios se ajusten si la pantalla es más pequeña */
+            width: 100%;
+        }
+
+        /* Contenedores de las columnas para los formularios */
+        .col-12.col-md-6 {
+            display: flex;
+            flex-direction: column; /* Asegura que los elementos dentro de la columna se apilen verticalmente */
+            margin-bottom: 20px; /* Añade espacio inferior entre las filas */
+            justify-content: center; /* Centra verticalmente los elementos dentro de la columna */
+       
+        }
+
+        /* Sombra y espaciado para las cajas de texto */
+        .form-control {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilo para los botones */
+        .btn-info, .btn-success, .btn-primary {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        /* Sombra para el SVG (donde se visualizan las sillas y mesas) */
+        svg {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #f8f9fa; /* Fondo suave */
+        }
+
+        /* Ajustes de sombra y espaciado en la tabla */
+        #example {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Ajuste en la visualización de las celdas */
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Mejoramos el espaciado y alineación de las etiquetas */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+            .form-group label {
+                font-weight: bold;
+            }
+
+        /* Estilo para el fondo */
+        body {
+            background-color: #f7f7f7;
+        }
+
+        /* Título */
+        h2 {
+            text-align: center;
+            color: #000000;
+            margin-bottom: 30px;
+            margin-top: 10px;
+        }
+
+        
+
+        /* Sombra para el SVG (donde se visualizan las sillas y mesas) */
+        svg {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            background-color: #f8f9fa; /* Fondo suave */
+        }
+
+        .form-group.row {
+            display: flex;
+            align-items: center;
+        }
+        /* Ajustar el ancho de los botones para que sean más consistentes */
+        .form-group .btn-info,
+        .form-group .btn-success,
+        .form-group .btn-danger {
+            width: 100%; /* Ajusta los botones para que ocupen todo el espacio disponible en su contenedor */
+            margin-bottom: 10px; /* Añadir espacio debajo de los botones */
+        }
+        /* Ajustar botones específicos para mantener su alineación */
+        .form-group.row .col-sm-3,
+        .form-group.row .col-sm-2 {
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+        /* Si quieres mantener un ancho uniforme pero más pequeño para algunos botones */
+        .btn-success, .btn-danger {
+            width: 100%; /* Ajusta el ancho de los botones */
+        }
+
+        /* Ajuste para que el archivo input esté alineado correctamente */
+        .form-group.row .col-sm-5 {
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group.row .col-sm-3:last-child .btn-info {
+            width: 200px;
+        }
+
+        .Seleccione {
+            margin-bottom: 17px; /* Añadir espacio debajo de los botones */
+        }
+        /* Asegura que la tabla esté centrada dentro del contenedor */
+        #example {
+            margin: 0 auto; /* Centra la tabla horizontalmente */
+            max-width: 100%; /* Limita el ancho máximo de la tabla al 90% del contenedor */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow-x: auto; /* Permite el scroll horizontal si la tabla es muy ancha */
+            overflow-y: hidden; /* No permite scroll vertical dentro de la tabla */
+            white-space: nowrap; /* Evita que el texto se corte dentro de las celdas */
+            table-layout: auto; /* Permite que el contenido ajuste el tamaño de las columnas */
+        }
+
+        /* Ajuste en la visualización de las celdas */
+        th, td {
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap; /* Evita que el contenido dentro de las celdas se ajuste en varias líneas */
+        }
+
+        /* Contenedor para la tabla */
+        .table-wrapper {
+            display: flex;
+            justify-content: center; /* Centrar la tabla */
+            align-items: center;
+            width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+            padding: 20px 0; /* Espaciado superior e inferior */
+            overflow-x: auto; /* Habilita el desplazamiento horizontal si es necesario */
+        }
+
+        /* Asegura que el contenedor de la tabla ocupe todo el ancho */
+        .container-fluid {
+            padding: 0; /* Elimina el padding predeterminado del contenedor */
+        }
+
+        .row {
+            width: 100%; /* Asegura que las filas ocupen todo el ancho disponible */
+           
+        }
+        
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+
+    <script>
+        window.onload = new function () {
+            LoadTableNew();
+        }
+        function viewPassword() {
+            var type = $("#PasswordUser").prop("type");
+            if (type == "password")
+                $("#PasswordUser").prop("type", "text");
+            else
+                $("#PasswordUser").prop("type", "password");
+        }
+
+        function sendMassivePassword() {
+            var table2 = $('#example').DataTable();
+            var rows_selected = table2.rows({ selected: true }).data();
+            var data = [];
+            for (var i = 0; i < rows_selected.length; i++) {
+                var resultado = rows_selected[i];
+                data.push(resultado);
+            }
+
+            swal({
+                title: "Esta seguro?",
+                text: "Se enviarán las credenciales a " + rows_selected.length + " personas",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: '/Home/SendEmail',
+                            type: 'post',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            success: function (data) {
+                                if (data.status) {
+                                    swal(data.message, {
+                                        icon: "success",
+                                    });
+                                    LoadTableNew();
+                                    newUser();
+                                } else {
+                                    swal(data.message, {
+                                        icon: "warning",
+                                    });
+                                }
+                            }
+                        });
+
+                    } else {
+                        swal("No se realizaron cambios");
+                    }
+                });
+        }
+
+        function deleteCenso() {
+            swal({
+                title: "Esta seguro?",
+                text: "Se eliminaran todos los usuarios con sus reservas",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.get('/Home/DeleteAllUser', function (data, status) {
+                            if (data.status) {
+                                swal(data.message, {
+                                    icon: "success",
+                                });
+                                LoadTableNew();
+                            } else {
+                                swal(data.message, {
+                                    icon: "warning",
+                                });
+                            }
+
+                        });
+                    } else {
+                        swal("No se realizaron cambios");
+                    }
+                });
+        }
+
+        function saveUploadCenso() {
+            if (window.FormData !== undefined) {
+                var fileUpload = $("#txtfile").get(0);
+                var files = fileUpload.files;
+
+                if (files.length == 0) {
+
+                    alert("Seleccione un archivo csv");
+                } else {
+                    var fileData = new FormData();
+                    for (var i = 0; i < files.length; i++) {
+                        fileData.append(files[i].name, files[i]);
+                    }
+
+                    $.ajax({
+                        url: '/Home/UploadCenso',
+                        type: "POST",
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        data: fileData,
+                        success: function (result) {
+                            if (result == "Correcto") {
+                                swal("Fichero cargado correctamente");
+                                LoadTableNew();
+                            } else {
+                                swal("Fichero incorrecto");
+
+                            }
+                        }
+
+                    });
+                }
+            }
+        }
+
+        function saveUser() {
+            var model = {
+                Id: $("#Id").val(),
+                NameUser: $("#NameUser").val(),
+                DNI: $("#DNI").val(),
+                UserName: $("#UserName").val(),
+                NameFriend: $("#NameFriend").val(),
+                Email: $("#Email").val(),
+                TypeUser: 2,
+                Phone: $("#Phone").val(),
+                PasswordUser: $("#PasswordUser").val(),
+                Active: $("#Active").is(':checked')
+            }
+
+            var json = JSON.stringify(model);
+
+            $.ajax({
+                url: '/Home/SaveUser',
+                type: 'post',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: json,
+                success: function (data) {
+                    if (data.status) {
+                        swal(data.message, {
+                            icon: "success",
+                        });
+                        LoadTableNew();
+                        newUser();
+                    } else {
+                        swal(data.message, {
+                            icon: "warning",
+                        });
+                    }
+                }
+            });
+
+        }
+
+        function LoadTableNew() {
+            $.get("/Home/GetUsers", function (data, status) {
+                if (data != null) {
+                    createDatatable(data);
+                }
+            });
+        }
+
+
+        function createDatatable(arrayUser) {
+
+            if ($.fn.dataTable.isDataTable('#example')) {
+                var table = $('#example').DataTable();
+                table.clear();
+                table.rows.add(arrayUser);
+                table.draw();
+            }
+            else {
+                $('#example').DataTable({
+                    dom: 'Blfrtip',
+                    buttons: [
+                        'copy', 'csv', 'excel', 'pdf', 'print', 'colvis',
+                         {
+                            extend: 'colvis',
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7] 
+                        }
+                    ],
+
+                 
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
+                    },
+                    'order': [[1, 'asc']],
+                    select: true,
+                    data: arrayUser,
+                    columns: [
+                        { data: "Id", title: 'Id' },
+                        { data: "NameUser", title: 'Nombre' },
+                        { data: "DNI", title: 'Documento' },
+                        { data: "UserName", title: 'Login' },
+                        { data: "NameFriend", title: 'Acompañante' },
+                        { data: "Email", title: 'Email' },
+                        { data: "Phone", title: 'Telefono' },
+                        { data: "Active", render: columnActive, bSortable: false },
+                        { defaultContent: '<input type="button" class="btn btn-warning" id="btnEdit" value="Editar" />' },
+                        { defaultContent: '<input type="button" class="btn btn-danger" id="btnDelete" value="Eliminar" />' }
+                    ]
+                });
+                function columnActive(data, type, full, meta) {
+                    return data ? "Activo" : "Inactivo";
+                }
+
+                $('#example').on('click', '#btnEdit', function () {
+                    var table = $('#example').DataTable();
+                    var data = table.row($(this).parents('tr')).data();
+
+                    $("#Id").val(data.Id);
+                    $("#NameUser").val(data.NameUser);
+                    $("#DNI").val(data.DNI);
+                    $("#UserName").val(data.UserName);
+                    $("#NameFriend").val(data.NameFriend);
+                    $("#Email").val(data.Email);
+                    $("#Phone").val(data.Phone);
+                    $("#PasswordUser").val(data.PasswordUser);
+
+                    $("#Active").prop("checked", data.Active);
+                });
+
+                $('#example').on('click', '#btnDelete', function () {
+                    var table = $('#example').DataTable();
+                    var data = table.row($(this).parents('tr')).data();
+                    swal({
+                        title: "Esta seguro?",
+                        text: "El usuario seleccionado será eliminado",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                        .then((willDelete) => {
+                            if (willDelete) {
+                                $.get('/Home/DeleteUser?userid=' + data.Id, function (data, status) {
+                                    if (data.status) {
+                                        swal(data.message, {
+                                            icon: "success",
+                                        });
+                                        LoadTableNew();
+                                    } else {
+                                        swal(data.message, {
+                                            icon: "warning",
+                                        });
+                                    }
+
+                                });
+                            } else {
+                                swal("No se realizaron cambios");
+                            }
+                        });
+                });
+            }
+        }
+
+
+        function newUser() {
+            $("#Id").val("");
+            $("#NameUser").val("");
+            $("#DNI").val("");
+            $("#UserName").val("");
+            $("#NameFriend").val("");
+            $("#Email").val("");
+            $("#Phone").val("");
+            $("#PasswordUser").val("");
+            $("#Active").prop("checked", false);
+        }
+
+    </script>

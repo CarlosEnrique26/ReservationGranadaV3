@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Config";
+}
+
+<h2>Configuración</h2>
+
+<div class="row">
+    <div class="col-sm-2">
+        <label>Envio de credenciales</label>
+    </div>
+    <div class="col-sm-10">
+        <div id="txtCredential"></div>
+    </div>
+</div>
+<br />
+<div class="row">
+    <div class="col-sm-2">
+        <label>Confirmación</label>
+    </div>
+    <div class="col-sm-10">
+        <div id="txtConfirm"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-2">
+        <input type="button" class="btn btn-success" onclick="saveConfig();"  value="Guardar" />
+    </div>
+ 
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.ckeditor.com/4.14.1/full/ckeditor.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+ 
+
+    window.onload = new function () {
+        CKEDITOR.replace('txtCredential');
+        CKEDITOR.replace('txtConfirm');
+
+        onloadConfig();
+    }
+     
+    function onloadConfig() {
+        $.get("/Home/GetConfig", function (data, status) {
+            CKEDITOR.instances['txtCredential'].setData(data.txtCredential);
+            CKEDITOR.instances['txtConfirm'].setData(data.txtConfirm);
+        });
+    }
+     
+    function saveConfig() {
+        var txtCredential = CKEDITOR.instances['txtCredential'].getData();
+        var txtConfirm = CKEDITOR.instances['txtConfirm'].getData();
+
+        var model = {
+            Id: 1,
+            Enterprise: "CustomVote",
+            txtCredential: txtCredential,
+            txtConfirm: txtConfirm
+        }
+
+        var json = JSON.stringify(model);
+
+        $.ajax({
+            url: '/Home/TextConfig',
+            type: 'post',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: json,
+            success: function (data) {
+                if (data.status) {
+                    swal(data.message, {
+                        icon: "success",
+                    });
+
+
+                } else {
+                    swal(data.message, {
+                        icon: "warning",
+                    });
+                }
+
+            }
+        });
+
+    }
+</script>

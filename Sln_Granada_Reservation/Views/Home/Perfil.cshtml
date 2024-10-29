@@ -1,0 +1,54 @@
+﻿@model Sln_Granada_Reservation.Models.TbUser
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Usuario</title>
+
+    <!-- CSS de Bootstrap y Toastr -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h2>Perfil de Usuario</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="NameUser">Nombre</label>
+                    <input type="text" class="form-control" id="NameUser" value="@Model.NameUser" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="DNI">DNI</label>
+                    <input type="text" class="form-control" id="DNI" value="@Model.DNI" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="UserName">Usuario</label>
+                    <input type="text" class="form-control" id="UserName" value="@Model.UserName" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="Email">Email</label>
+                    <input type="text" class="form-control" id="Email" value="@Model.Email" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="Phone">Teléfono</label>
+                    <input type="text" class="form-control" id="Phone" value="@Model.Phone" disabled>
+                </div>
+                <div class="form-group">
+                    <label for="Active">Activo</label>
+                    <input type="text" class="form-control" id="Active" value="@(Model.Active ? "Sí" : "No")" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript de jQuery, Bootstrap y Toastr -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,745 @@
+﻿
+@{
+    ViewBag.Title = "ViewTableUser";
+    Layout = "~/Views/Shared/_LayoutUser.cshtml";
+    var tbUserId = ViewBag.UserId;
+    var username = ViewBag.NameUser;
+}
+<br />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="~/Content/styles/ViewTableUser.css" rel="stylesheet" />
+
+<body>
+    <div class="container" id="divMain">
+        <div class="row">
+            <div class="col-12 col-md-12" style="text-align:center;">
+                <div class="form-group row">
+                    <div class="col-12">
+                        <h5>Para realizar su reserva seleccione en primer lugar la mesa y luego presiones el botón de “Reservar”</h5>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-12">
+                        <select class="form-control-SelectMesa" id="cboTable">
+                            <option value="0">Cargando ...</option>
+
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <input type="button" onclick="GetParticipants();" class="ButtonViewTable" value="Ver Mesa" id="Id">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="divButtonSigViewTable">
+                        <input type="button" onclick="nextStapeReservation(0);" class="ButtonSigViewTable" value="Reservar" id="Id">
+                    </div>
+                </div>
+                <div class="image-container">
+                    <img src="~/Content/CajaRuralGranada.jpg" alt="Caja Rural Granada">
+                </div>
+                <div class="form-group row">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="container" id="divReservation" style="display:none;">
+        <div class="row">
+            <div class="col-12" id="" style="text-align:center;">
+                <div class="form-group row">
+
+                    <h2 class="TittleTable" id="lblMesa">Mesa</h2>
+                    <label class="Label-SillasReservadas">En primer lugar realice la reserva del titular y a continuación la de la persona acompañante</label>
+
+
+                </div>
+                <div class="form-group row" id="listChairs">
+
+
+                </div>
+
+                <svg width="500" height="500" viewBox="0 0 500 500" style="margin-top:-20px;">
+
+                    <!-- Mesa Redonda (imagen) -->
+                    <image href="~/Content/mesas.png" x="130" y="130" width="240" height="240" />
+                    <!-- Sillas alrededor de la mesa -->
+
+                    <g id="sillas"></g>
+                </svg>
+                <div class="form-group row" style="margin-top:-20px;">
+
+                    <div class="divButtonConfirmarMesa">
+                        <input type="button" class="ButtonConfirmarMesa" value="Confirmar" onclick="confirmarReservation();">
+                        <input type="button" class="ButtonConfirmarMesa" value="Cambiar Mesa" onclick="changeOtherMesa();">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content Personas-Registradas">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="h5Title">Personas Registradas</h5>
+
+                </div>
+                <div class="modal-body-Personas-Registradas" id="bodyInfo">
+                    Usuarios
+                </div>
+                <div class="modal-tittle-Personas-Registradas">
+                    <h5 class="modal-tittle" id="h5TitleQuestion"></h5>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+                    <div class="SI-PersonasRegistradas">
+                        <button type="button" class="BtnModalPersonasRegistradasSI" onclick="nextStapeReservation(0);" data-dismiss="modal">Si</button>
+                    </div>
+                    <div class="NO-PersonasRegistradas">
+                        <button type="button" class="BtnModalPersonasRegistradasNO" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="text-center modal-header">
+                    <h4 class="TittleResumen-Reservas" id="h5resume">Resumen de reserva realizada:</h4>
+                </div>
+                <div class="modal-body-Resumen-Reservaras" id="divInfo">
+                    Usuarios
+                </div>
+                <div class="modal-footer d-flex flex-wrap justify-content-between">
+
+                    <div class="divAnularReserva">
+                        <button type="button" class="AnularReserva" onclick="AnulateReservation();" data-dismiss="modal">Anular</button>
+                    </div>
+                    <div class="divCerrarReserva">
+                        <button type="button" class="CerrarReserva" data-dismiss="modal">Cerrar</button>
+                    </div>
+                    <div class="divEditarReserva">
+                        <button type="button" class="EditarReserva" onclick="EditReservation();" data-dismiss="modal">Editar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModalObservation" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="text-center modal-header">
+                    <h4 class="TittleResumen-Reservas" id="h5resume">Observaciones:</h4>
+                </div>
+                <div class="modal-body-Resumen-Reservaras" id="">
+                    <div class="row">
+                        <label class="Indicaciones">A continuación, si lo desea puede indicar algún tipo de alergia o régimen alimenticio especial para tenerlo en cuenta durante el evento:</label>
+                        <textarea class="text-area" id="observation" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-between">
+
+                    <div class="divAnularReserva">
+                        <button type="button" class="AnularReserva" onclick="liberateChair();" data-dismiss="modal">Cerrar</button>
+                    </div>
+                    <div class="divEditarReserva">
+                        <button type="button" class="EditarReserva" onclick="asignTableIdWithObservation();" data-dismiss="modal">Aceptar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModalLoading" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body-Resumen-Reservaras" id="" style="text-align: center; height: 180px;">
+                    <h5 class="TittleResumen-Reservas" style=" margin-top: 20px; margin-bottom: 20px;" id="h5resume">Cargando Mesa:</h5>
+                    <div class="spinner-grow text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-success" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <h5 class="TittleResumen-Reservas" style=" margin-top: 20px; margin-bottom: 20px;" id="h5resume">Verificando puestos disponibles:</h5>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para mostrar sillas ocupadas -->
+    <div class="modal fade" id="modalOccupiedChair" tabindex="-1" role="dialog" aria-labelledby="modalOccupiedChairLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalOccupiedChairLabel">Información de la Silla</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="modalChairNumber"></p>
+                    <p id="modalChairUser"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    
+</style>
+
+<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+<script>
+    var tableid = 0;
+    var dataGeneral = [];
+    var isChangeTable = true;
+    var isReservaPrevius = false;
+    var chairs = [];
+
+
+    window.onload = new function () {
+        loadConfig();
+        loadReservation();
+    }
+
+    function loadConfig() {
+        $.get("/Home/GetConfig", function (data, status) {
+            $("#imgFile").attr("src", data.BackgroundTable);
+         });
+    }
+
+
+    function LoadTables() {
+        var search = "";
+
+        var html = " <option value='0'>Seleccione una mesa</option>";
+        $.get("/Home/GetUserLikeTable?search=" + search, function (data, status) {
+            $("#cboTable").empty();
+            for (var i = 0; i < data.length; i++) {
+                html += "<option value=" + data[i].TableId + ">" + data[i].Text + "</option>";
+            }
+
+            $("#cboTable").append(html);
+        });
+    }
+
+    const imagenes = [
+        "https://mivoto.es/Resource/Votation/Repository/personme.png", //0
+        "https://mivoto.es/Resource/Votation/Repository/personred.png", //1
+        "https://mivoto.es/Resource/Votation/Repository/persongreen.png", //2
+    ];
+
+    var mesaIdWithObservation = 0;
+    var numSillaGeneral = 0;
+    var mesaIdReservation = 0;
+    var isConfirmReservation = 0;
+     /* * * */
+
+    /* evento al ingresar despues del login*/
+    function loadReservation() {
+        $.get("/Home/GetInfoUserReservation?userid=@tbUserId", function (data, status) {
+
+            if (data.length > 0) { loadResume(data); LoadTables(); }
+            else {
+                    LoadTables();
+                    $("#divMain").css("display", "block");
+                    $("#divReservation").css("display", "none");
+                }
+        });
+    }
+
+    /*Si tines reserva, te muestra tu resumen*/
+   function loadResume(data) {
+       $('#exampleModalCenter2').modal('show');
+       $("#divInfo").empty();
+
+       /* capturar mesa asignada */
+       mesaIdReservation = data[0].MesaId;
+       isReservaPrevius = true;
+
+        var html = "<h5> Reserva: " + data[0].MesaName + "</h5><br /><ul>";
+
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++) {
+                if (i > 0) {
+
+                    html += "<li> Acompañante  D/Dª " + data[i].ChairName + " " + data[i].NameUser + "</li>";
+                } else {
+                    html += "<li>  D/Dª " + data[i].ChairName + " " + data[i].NameUser + "</li>";
+                }
+                html += "<h6> Observaciones : </h6><ul><li>" + data[i].Observation + "</li></ul><br /";
+            }
+            html += "</ul>";
+
+            $("#divInfo").append(html);
+        }
+    }
+    /* Ver información de la mesa */
+
+    function GetParticipants() {
+        var tableid = $("#cboTable").val();
+        if (tableid == 0) {
+            swal("Seleccione una mesa");
+            return false;
+        }
+        $("#bodyInfo").empty();
+
+        var html = "<ul> ";
+
+
+        $.get("/Home/GetDetailTablesAndUser?tableid=" + tableid, function (data, status) {
+            $("#h5TitleQuestion").html("¿Desea seleccionar la " + data[0].MesaName + "?");
+
+            for (var i = 0; i < data.length; i++) {
+                html += "<li>" + data[i].ChairName + " " + data[i].NameUser + "</li>";
+            }
+            html += "</ul>";
+            $("#bodyInfo").append(html);
+
+            $('#exampleModalCenter').modal('show');
+        });
+
+    }
+    /* ver la mesa en detalle, sillas etc */
+    function nextStapeReservation(tableid) {
+        var tableidGeneral = 0;
+        if (tableid == 0) {
+            tableidGeneral = $("#cboTable").val();
+            if (tableidGeneral == 0) {
+                swal("Seleccione una mesa");
+                return false;
+            }
+        } else {
+            tableidGeneral = tableid;
+        }
+
+        $('#exampleModalLoading').modal('show');
+        $("#divMain").css("display", "none");
+        $("#divReservation").css("display", "block");
+        chairs = [];
+
+
+        $.get("/Home/GetDetailTablesAndUser?tableid=" + tableidGeneral, function (data, status) {
+            dataGeneral = data;
+            $("#listChairs").empty();
+            crearSillas(data);
+        });
+
+    }
+
+
+    /* crear las sillas  */
+    function crearSillas(data) {
+        const numSillas = data.length;
+        const sillasG = document.getElementById("sillas");
+
+        // Limpiar el SVG de sillas anteriores
+        sillasG.innerHTML = '';
+        $("#lblMesa").html(data[0].MesaName + " seleccionada");
+
+        console.log(data);
+
+        for (let i = 0; i < data.length; i++) {
+            var color = (data[i].IsOcupate) ? "red" : "green";
+            const angulo = i * (360 / numSillas) * (Math.PI / 180); // Convertir a radianes
+            const radio = 180;
+            const cx = 250 + radio * Math.sin(angulo);
+            const cy = 250 - radio * Math.cos(angulo);
+              
+            const sillaImagen = document.createElementNS('http://www.w3.org/2000/svg', 'image'); 
+            if (data[i].UserId == '@tbUserId') {
+                sillaImagen.setAttribute('href', imagenes[0]);
+            } else if (data[i].IsOcupate && data[i].AccompaniedBy == '@tbUserId') {
+                sillaImagen.setAttribute('href', imagenes[0]);
+            } else if (data[i].IsOcupate && (data[i].UserId != '@tbUserId' && data[i].AccompaniedBy != '@tbUserId')) {
+                sillaImagen.setAttribute('href', imagenes[1]);
+            } else {  
+                sillaImagen.setAttribute('href', imagenes[2]); 
+            }
+
+            sillaImagen.setAttribute('x', cx - 20);
+            sillaImagen.setAttribute('y', cy - 20);
+            sillaImagen.setAttribute('width', 40);
+            sillaImagen.setAttribute('height', 40);
+
+            // Mantener la lógica actual de los clics
+            if (data[i].UserId == '@tbUserId') {
+                chairs.push(data[i]);
+                sillaImagen.setAttribute('onclick', `removeNombre(${data[i].ChairId}, ${cx}, ${cy})`);
+            } else if (!data[i].IsOcupate) {
+                sillaImagen.setAttribute('onclick', `asignarNombre(${data[i].ChairId}, ${cx}, ${cy})`);
+            } else {
+                sillaImagen.setAttribute('onclick', `showOccupiedModal(${data[i].ChairId}, '${data[i].NameUser}', ${i + 1})`);
+            }
+
+
+
+            sillasG.appendChild(sillaImagen);
+
+            const numeroSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            numeroSilla.setAttribute('x', cx - 25);
+            numeroSilla.setAttribute('y', cy);
+            numeroSilla.setAttribute('text-anchor', 'end');
+            numeroSilla.setAttribute('dy', '0.3em');
+            numeroSilla.setAttribute('class', 'numeroSilla');
+            numeroSilla.setAttribute('fill', color);
+            numeroSilla.setAttribute('style', 'font-weight: bold;');
+            numeroSilla.setAttribute('id', "label" + (data[i].ChairId));
+            numeroSilla.textContent = i + 1;
+            sillasG.appendChild(numeroSilla);
+
+            const etiquetaSilla = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            etiquetaSilla.setAttribute('x', cx - 20);
+            etiquetaSilla.setAttribute('y', cy - 30);
+            etiquetaSilla.setAttribute('dy', '0.3em');
+            etiquetaSilla.setAttribute('id', i + 1);
+
+            var lengthName = data[i].NameUser.length;
+            if (lengthName <= 15) {
+                etiquetaSilla.setAttribute('text-anchor', 'middle');
+            } else {
+                if (i <= 6) {
+                    etiquetaSilla.setAttribute('text-anchor', 'start');
+                } else {
+                    etiquetaSilla.setAttribute('text-anchor', 'end');
+                }
+            }
+            etiquetaSilla.setAttribute('id', "silla" + (data[i].ChairId));
+            etiquetaSilla.setAttribute('class', 'etiquetaSilla ocultar-nombre');
+            etiquetaSilla.setAttribute('fill', color);
+            etiquetaSilla.setAttribute('style', 'font-weight: bold;');
+            etiquetaSilla.setAttribute('id', "silla" + (data[i].ChairId));
+            etiquetaSilla.textContent = data[i].NameUser;
+            sillasG.appendChild(etiquetaSilla);
+        }
+
+        setTimeout(() => {
+            $('#exampleModalLoading').modal('hide');
+        }, 1000);
+
+    }
+
+
+    /* abrir modal de silla ocupada */
+
+    function showOccupiedModal(chairId, nameUser, chairNumber) {
+        // Llenar el modal con los detalles de la silla y el ocupante
+        $("#modalChairNumber").text("Silla número: " + chairNumber);
+        $("#modalChairUser").text("Ocupante: " + nameUser);
+
+        // Mostrar el modal
+        $('#modalOccupiedChair').modal('show');
+    }
+
+
+    /* elegir silla */
+    function asignarNombre(numSilla, x, y) {
+        if (mesaIdReservation > 0) {
+            if (mesaIdReservation != dataGeneral[0].MesaId) {
+                swal("Usted ya tiene una reserva en otra mesa, primero anule antes de continuar (seleccione cambiar de mesa y anular)");
+                return false;
+            }
+        }
+
+        if (chairs.length >= 2) {
+            swal("Usted ya tiene 2 sillas asignadas");
+        } else {
+            var localizateChair = chairs.findIndex(x => x.ChairId == numSilla);
+            if (localizateChair > -1) {
+                swal("Usted ya eligío esta silla");
+
+            } else {
+                swal({
+                    title: "Esta seguro?",
+                    text: "Se asignará la silla seleccionada",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            //consulta disponibilidad
+                            $.get("/Home/FindChairOcupate?chairid=" + numSilla, function (data, status) {
+                                if (data.status) {
+                                    swal(data.message, {
+                                        icon: "warning",
+                                    });
+                                    //separo la silla
+                                } else {
+
+                                    $.get("/Home/SeparateChairOcupate?chairid=" + numSilla + "&status=true", function (data, status) {
+                                        if (data.status) {
+                                            $('#exampleModalObservation').modal('show');
+                                            isConfirmReservation = 1;
+                                            for (var i = 0; i < dataGeneral.length; i++) {
+                                                if (dataGeneral[i].ChairId == numSilla) {
+                                                    mesaIdWithObservation = numSilla;
+                                                }
+                                            }
+                                            $('image[onclick="asignarNombre(' + numSilla + ', ' + x + ', ' + y + ')"]').css('filter', 'hue-rotate(0deg) saturate(2000%) brightness(0.2) invert(23%) sepia(100%) saturate(6536%) hue-rotate(1deg) brightness(60%) contrast(100%)');
+
+                                        }
+                                    });
+                                }
+                            });
+
+
+                        } else {
+                            swal("No se realizaron cambios");
+                        }
+                    });
+            }
+        }
+    }
+
+    /* asignar  reserva */
+
+    function asignTableIdWithObservation() {
+        var name = "";
+        var nameprevius = "";
+        for (var i = 0; i < dataGeneral.length; i++) {
+            if (dataGeneral[i].ChairId == mesaIdWithObservation) {
+                if (chairs.length == 0) {
+                    nameprevius = dataGeneral[i].ChairName;
+                    name = (dataGeneral[i].NameUser) == "" ? '@username' : (dataGeneral[i].NameUser) ;
+                } else {
+                    //nameprevius = chairs[0].ChairName;
+                    name = " Acompañante";
+                }
+
+                var chair = {
+                    MesaId: dataGeneral[i].MesaId,
+                    ChairId: dataGeneral[i].ChairId,
+                    Observation: $("#observation").val(),
+                    MesaName: dataGeneral[i].MesaName,
+                    ChairName: dataGeneral[i].ChairName,
+                    UserId: dataGeneral[i].UserId,
+                    NameUser: dataGeneral[i].NameUser,
+                    IsOcupate: dataGeneral[i].IsOcupate,
+                }
+                chairs.push(chair);
+            }
+        }
+        swal("Se asignó la silla");
+        $("#observation").val("");
+
+        $("#label" + mesaIdWithObservation).css({ fill: 'red' });
+        $("#silla" + mesaIdWithObservation).text(name);
+        $("#silla" + mesaIdWithObservation).css({ fill: 'red' });
+    }
+
+    /* editar reservar mensaje de confirmación */
+    function EditReservation() {
+        swal({
+            title: "Esta seguro?",
+            text: "Usted actualizará su reserva",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    StepEditReservation();
+                } else {
+                    swal("No se realizaron cambios");
+                    loadResume();
+                }
+            });
+    }
+    /* paso editar */
+    function StepEditReservation() {
+        nextStapeReservation(mesaIdReservation);
+    }
+
+    /* remover personas asignadas */
+
+    function removeNombre(charid, x, y) {
+        var localizateChair = chairs.findIndex(x => x.ChairId == charid);
+        console.log("localizateChair ", localizateChair);
+        if (localizateChair > -1) {
+            swal({
+                title: "Esta seguro?",
+                text: "Usted eliminará la silla reservada",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        var newchair = chairs;
+                        newchair.splice(localizateChair);
+                        chairs = newchair;
+                        if (chairs.length == 0) {
+                            mesaIdReservation = 0;
+                        }
+                        deleteReservationByChairId(charid);
+                    } else {
+                        swal("No se realizaron cambios");
+                    }
+                });
+        }
+        console.log(localizateChair);
+    }
+    /* eliminar una silla */
+    function deleteReservationByChairId(chairId) {
+        $.get("/Home/DeleteReservationByChairId?chairId=" + chairId, function (data, status) {
+            StepEditReservation();
+        });
+    }
+    /* cambiar mesa */
+
+    function changeOtherMesa() {
+        if (isConfirmReservation == 1) {
+                swal({
+                title: "Esta seguro?",
+                text: "Si cambia de mesa sin confirmar los puestos no serán reservados",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            $("#divMain").css("display", "block");
+                            $("#divReservation").css("display", "none");
+                            loadReservation();
+                        } else {
+                           // swal("No se realizaron cambios");
+                        }
+                    });
+
+        }   else {
+            $("#divMain").css("display", "block");
+            $("#divReservation").css("display", "none");
+            loadReservation();
+        }
+
+    }
+    /* anular reserva* */
+    function AnulateReservation() {
+        swal({
+            title: "Esta seguro?",
+            text: "Usted eliminara su reserva",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+
+                    $.get("/Home/DeleteReservationByUser?userid=@tbUserId" , function (data, status) {
+                        if (data.status) {
+                            mesaIdReservation = 0;
+                            swal(data.message, {
+                                icon: "success",
+                            });
+
+                            LoadTables();
+                        } else {
+                            swal(data.message, {
+                                icon: "warning",
+                            });
+                        }
+                     });
+
+
+                } else {
+                    swal("No se realizaron cambios");
+                    loadResume();
+                }
+            });
+    }
+
+    /* liberar sillas */
+    function liberateChair() {
+        $.get("/Home/SeparateChairOcupate?chairid=" + mesaIdWithObservation + "&status=false", function (data, status) {
+
+        });
+    }
+
+    /* confirmar reserva */
+    function confirmarReservation() {
+        swal({
+            title: "Esta seguro?",
+            text: "Usted efectuará su reserva",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    saveReservation();
+                } else {
+                    swal("No se realizaron cambios");
+                }
+            });
+    }
+
+    /* guardar reserva */
+    function saveReservation() {
+     var listmodel = [];
+     for (var i = 0; i < chairs.length; i++) {
+          var model = {
+              TbTableId: chairs[i].MesaId,
+              TbChair: chairs[i].ChairId,
+              TbUserId: '@tbUserId',
+              Observation: chairs[i].Observation
+         };
+         listmodel.push(model);
+     }
+
+     var json = JSON.stringify(listmodel);
+     $.ajax({
+         url: '/Home/SaveReservation',
+         type: 'post',
+         dataType: 'json',
+         contentType: 'application/json',
+         data: json,
+         success: function (data) {
+             if (data.status) {
+                 swal(data.message, ", en breve recibirá un mail con la confirmación", {
+                     icon: "success",
+                 });
+                 isConfirmReservation = 2;
+                 setTimeout(() => {
+                     window.location.href = '/Home/ViewTableUser';
+                 }, 2500);
+             } else {
+                 swal(data.message, {
+                     icon: "warning",
+                 });
+             }
+         }
+        });
+    }
+
+
+
+</script>
